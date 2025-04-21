@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prod_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      - db
+    networks:
+      - rede-prod
+
+  db:
+    image: postgres:15
+    container_name: transito_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_DB: prod_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5433:5432"
+    networks:
+      - rede-prod
+
+networks:
+  rede-prod:
+    driver: bridge
