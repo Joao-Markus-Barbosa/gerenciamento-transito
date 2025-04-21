@@ -30,9 +30,13 @@ jobs:
           push: true
           tags: joaomb01/gerenciamento-transito:prod
 
+      - name: Login no Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy no Azure App Service
         uses: azure/webapps-deploy@v2
         with:
-          app-name: gerenciamento-transito-prod
-          publish-profile: ${{ secrets.AZURE_PROD_PUBLISH_PROFILE }}
+          app-name: gerenciamento-transito-new
           images: joaomb01/gerenciamento-transito:prod
