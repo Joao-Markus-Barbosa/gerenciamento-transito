@@ -76,3 +76,6 @@ Todos os requisitos do desafio foram atendidos:
 
 Este projeto simula com fidelidade um ambiente real de DevOps para aplicações modernas baseadas em microserviços.
 
+## Exemplo de Funcionamento
+
+![](/assets/Gerenciamento-transito.gif)
