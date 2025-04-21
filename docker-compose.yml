@@ -1,32 +1,39 @@
-version: '3.8'
+name: Deploy Produção
 
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/transito_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: admin
-    networks:
-      - transito-net
+on:
+  push:
+    branches:
+      - main
 
-  db:
-    image: postgres:15
-    container_name: transito_postgres
-    restart: always
-    environment:
-      POSTGRES_DB: transito_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-    ports:
-      - "5432:5432"
-    networks:
-      - transito-net
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
 
-networks:
-  transito-net:
-    driver: bridge
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Build do JAR com Maven
+        run: mvn clean package -DskipTests
+
+      - name: Login no DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build e Push da imagem Docker
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: joaomb01/gerenciamento-transito:prod
+
+      - name: Deploy no Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: gerenciamento-transito-prod
+          publish-profile: ${{ secrets.AZURE_PROD_PUBLISH_PROFILE }}
+          images: joaomb01/gerenciamento-transito:prod
+
