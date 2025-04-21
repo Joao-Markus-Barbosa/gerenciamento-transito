@@ -28,11 +28,11 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: joaomarkus/gerenciamento-transito:prod
+          tags: joaomb01/gerenciamento-transito:prod
 
       - name: Deploy no Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: gerenciamento-transito-prod
           publish-profile: ${{ secrets.AZURE_PROD_PUBLISH_PROFILE }}
-          images: joaomarkus/gerenciamento-transito:prod
+          images: joaomb01/gerenciamento-transito:prod
